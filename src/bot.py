@@ -2,14 +2,29 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 print("Bot is working!")
 
+users = []
 
 def start(update, context):
-	chat = update.effective_chat
-	context.bot.send_message(chat_id=chat.id, text="Привет, я Оки Токен~ Напиши /help, чтобы узнать больше.")
+	flag = 0
+	for i in users:
+		if i['ID'] == update.effective_user.id:
+			flag = 1
+	if flag:
+		message = "Привет, я Оки Токен~ Напиши /help, чтобы узнать больше."
+		update.message.reply_text(message)
+	else:
+		users.append({
+		"ID": update.effective_user.id,
+		"balance": 100,
+		"tokens": []
+		})
+		message = "Привет, я Оки Токен~ Напиши /help, чтобы узнать больше."
+		update.message.reply_text(message)
+		print(users)
+
 
 
 def help_command(update, context):
-	chat = update.effective_chat
 	message = "Доступные команды:\n"
 	message += "/start - Приветствие\n"
 	message += "/buy - Купить NFT\n"
@@ -18,7 +33,6 @@ def help_command(update, context):
 
 
 def buy_command(update, context):
-	chat = update.effective_chat
 	message = "Выберите категорию:\n"
 	message += "/video - Видео\n"
 	message += "/img - Изображения\n"
@@ -28,39 +42,32 @@ def buy_command(update, context):
 
 
 def sell_command(update, context):
-	chat = update.effective_chat
 	message = "Вот твои NFT~\n"
 	update.message.reply_text(message)
 
 
 def gif_command(update, context):
-	chat = update.effective_chat
 	message = "Вот gif~\n"
 	update.message.reply_text(message)
 
 
 def audio_command(update, context):
-	chat = update.effective_chat
 	message = "Вот звуки~\n"
 	update.message.reply_text(message)
 
 
 def video_command(update, context):
-	chat = update.effective_chat
 	message = "Вот видео~\n"
 	update.message.reply_text(message)
 
 
 def img_command(update, context):
-	chat = update.effective_chat
 	message = "Вот видео~\n"
 	update.message.reply_text(message)
 
 
 def unknown_command(update, context):
-	chat = update.effective_chat
-	message = "Вот картинки" \
-			  "\n"
+	message = "Вот картинки\n"
 	update.message.reply_text(message)
 
 
