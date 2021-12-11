@@ -14,10 +14,20 @@ market = {
         "price": 10,
         "name": 'Hook'
     },
-    '234': {
+    '233': {
         "user_id": 1233164455,
         "price": 15,
-        "name": 'Not hook'
+        "name": 'Rare'
+    },
+    '2753': {
+        "user_id": 1233164455,
+        "price": 30,
+        "name": 'Mythical'
+    },
+    '342348': {
+        "user_id": 1233164455,
+        "price": 40,
+        "name": 'Arcane'
     }
 }
 
@@ -60,37 +70,13 @@ def tockens_command(update, context):
     update.message.reply_text(message)
 
 
-def buy_command(update, context):
-    message = "Выберите категорию:\n"
-    message += "/video - Видео\n"
-    message += "/game - Игровые предметы\n"
-    message += "/audio - Аудиофайлы\n"
-    message += "/gif - GIF-изображения\n"
-    update.message.reply_text(message)
-
-
 def sell_command(update, context):
     tockens_command(update, context)
     message = 'Чтобы продать напиши sell_<цена>_<токен>\n'
     update.message.reply_text(message)
 
 
-def gif_command(update, context):
-    message = "Вот gif~\n"
-    update.message.reply_text(message)
-
-
-def audio_command(update, context):
-    message = "Вот звуки~\n"
-    update.message.reply_text(message)
-
-
-def video_command(update, context):
-    message = "Вот видео~\n"
-    update.message.reply_text(message)
-
-
-def game_command(update, context):
+def buy_command(update, context):
     message = "Вот игровые предметы~\n"
     update.message.reply_text(message)
 
@@ -129,7 +115,6 @@ def unknown_command(update, context):
         market[token] = {
             "price": price,
             "user_id": update.effective_user.id
-            "name":
         }
 
         message = 'Успешно выставлен на продажу!\n\n'
@@ -161,10 +146,6 @@ dispatcher.add_handler(CommandHandler("balance", balance_command))
 dispatcher.add_handler(CommandHandler("help", help_command))
 dispatcher.add_handler(CommandHandler("buy", buy_command))
 dispatcher.add_handler(CommandHandler("sell", sell_command))
-dispatcher.add_handler(CommandHandler("audio", audio_command))
-dispatcher.add_handler(CommandHandler("game", game_command))
-dispatcher.add_handler(CommandHandler("gif", gif_command))
-dispatcher.add_handler(CommandHandler("video", video_command))
 dispatcher.add_handler(CommandHandler("info", info_command))
 dispatcher.add_handler(MessageHandler(Filters.text or Filters.command, unknown_command))
 
