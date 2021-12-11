@@ -1,6 +1,7 @@
 from telegram.ext import CommandHandler, MessageHandler, Filters, ConversationHandler
-from telegram.ext import Updater, InlineQueryHandler, CallbackContext, CallbackQueryHandler
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove, ReplyKeyboardMarkup
+from telegram.ext import Updater, CallbackContext, CallbackQueryHandler
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
+from random import randint
 
 print("Bot is working!")
 
@@ -36,10 +37,39 @@ market = {
     },
     '452': {
         "user_id": 1233164455,
+        "price": 10000000000000000,
+        "url": 'https://filesamples.com/samples/video/mp4/sample_640x360.mp4'
+    }
+}
+
+free_nft = {
+    'djfidsjf': {
+        "user_id": 1233164455,
+        "price": 10,
+        "url": 'http://techslides.com/demos/sample-videos/small.mp4'
+    },
+    '13n923f3': {
+        "user_id": 1233164455,
+        "price": 15,
+        "url": 'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4'
+    },
+    '23dh9831d': {
+        "user_id": 1233164455,
+        "price": 32,
+        "url": 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'
+    },
+    '327dh92d': {
+        "user_id": 1233164455,
+        "price": 14,
+        "url": 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'
+    },
+    '32d2893': {
+        "user_id": 1233164455,
         "price": 100,
         "url": 'https://filesamples.com/samples/video/mp4/sample_640x360.mp4'
     }
 }
+
 
 cursors = {
 
@@ -57,19 +87,19 @@ def catcher(func):
         try:
             func(update, context)
         except Exception as ex:
-            message = r"Извините, у нас возникли технические сложности\. Вскоре мы все исправим\."
+            message = "*звуки сверчков*"
             update.message.reply_markdown_v2(message)
 
     return catch
 
 
-@catcher
+   
 def reg_command(update, context):
     message = 'Пройдите регистрацию по ссылке test.com'
     update.message.reply_text(message)
 
 
-@catcher
+   
 def start(update, context):
     if not users.get(update.effective_user.id):
         users[update.effective_user.id] = {
@@ -84,7 +114,7 @@ def start(update, context):
         update.message.reply_text(message)
 
 
-@catcher
+   
 def help_command(update, context):
     message = "Доступные команды:\n"
     message += "/start - Приветствие\n"
@@ -96,7 +126,7 @@ def help_command(update, context):
     update.message.reply_text(message)
 
 
-@catcher
+   
 def tockens_command(update, context):
     print(users)
     print(users[update.effective_user.id])
@@ -104,22 +134,21 @@ def tockens_command(update, context):
         message = 'Вот твои токены~\n\n'
         update.message.reply_text(message)
         for token in users[update.effective_user.id]['tokens']:
-            context.bot.send_video(update.message.chat.id, users[update.effective_user.id]['tokens'][token]['url'])
-            message = str(token) + "\n"
+            message = 'Токен: ' + str(token) + "\n"
+            message += 'URL: ' + users[update.effective_user.id]['tokens'][token]['url'] + '\n'
             update.message.reply_text(message)
     else:
         message = 'Ой, у тебя еще нет токенов( Ты можешь купить их, написав /buy\n'
         update.message.reply_text(message)
 
 
-@catcher
+   
 def sell_command(update, context):
-    tockens_command(update, context)
     message = 'Чтобы продать напиши sell_<цена>_<токен>\n'
     update.message.reply_text(message)
 
 
-@catcher
+   
 def unknown_command(update, context):
     if 'buy' in update.message.text:
         mes = update.message.text.split('_')
@@ -170,23 +199,23 @@ def unknown_command(update, context):
         update.message.reply_text(message)
 
 
-@catcher
+   
 def info_command(update, context):
     message = "Информация о бот\n"
     update.message.reply_text(message)
 
 
-@catcher
+   
 def balance_command(update, context):
     message = 'Ваш баланс: ' + str(users[update.effective_user.id]['balance']) + '\n'
     update.message.reply_text(message)
 
 
-@catcher
+   
 def buy(update: Update, context: CallbackContext) -> None:
     cursor = cursors.get(update.effective_user.id, 0)
 
-    if cursor > len(market):
+    if cursor >= len(market):
         cursor = 0
 
     if len(market) == 0:
@@ -215,7 +244,7 @@ def buy(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Сделайте выбор', reply_markup=reply_markup)
 
 
-@catcher
+   
 def button(update: Update, context: CallbackContext) -> None:
     """Parses the CallbackQuery and updates the message text."""
     query = update.callback_query
@@ -239,6 +268,15 @@ def button(update: Update, context: CallbackContext) -> None:
             users[update.effective_user.id]['tokens'][token] = {
                 'url': market[token]['url'],
             }
+
+            if randint(0, 5) == 3:
+                message += '\n\n\nВам повезло! Во получаете еще один NFT бесплатно!\n'
+
+                r = randint(0, len(free_nft) - 1)
+                t, v = list(free_nft.items())[r]
+                free_nft.pop(t, None)
+
+                users[update.effective_user.id]['tokens'][t] = v
 
             market.pop(token, None)
             message += 'Ваш баланс: ' + str(users[update.effective_user.id]['balance']) + '\n'
