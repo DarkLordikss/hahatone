@@ -3,6 +3,7 @@ from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackCo
 
 print("Bot is working!")
 
+test = ''
 users = {
     1233164455: {
         "balance": 100,
@@ -12,9 +13,29 @@ users = {
 market = {
     '123': {
         "user_id": 1233164455,
-        "price": 10,
+        "price": 30,
         "url": 'http://techslides.com/demos/sample-videos/small.mp4'
-    }
+    },
+    '248': {
+        "user_id": 1233164455,
+        "price": 45,
+        "url": 'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4'
+    },
+    '2345': {
+            "user_id": 1233164455,
+            "price": 32,
+            "url": 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'
+        },
+    '113': {
+            "user_id": 1233164455,
+            "price": 14,
+            "url": 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'
+        },
+    '452': {
+            "user_id": 1233164455,
+            "price": 100,
+            "url": 'https://filesamples.com/samples/video/mp4/sample_640x360.mp4'
+        }
 }
 
 
@@ -24,8 +45,12 @@ def start(update, context):
             "balance": 100,
             "tokens": {}
         }
-    message = "Привет, я Оки Токен~ Напиши /help, чтобы узнать больше."
-    update.message.reply_text(message)
+    if test == '':
+        message = "Привет, я Оки Токен~ Для авторизации введите auth_<токен_авторизации>. Для регистрации введите /reg"
+        update.message.reply_text(message)
+    else:
+        message = "Привет, я Оки Токен~ Напиши /help, чтобы узнать больше."
+        update.message.reply_text(message)
 
 
 def help_command(update, context):
@@ -71,6 +96,10 @@ def buy_command(update, context):
         update.message.reply_text(message, parse_mode="HTML")
 
 
+def reg(update, context):
+    message = 'Пройдите регистрацию по ссылке test.com'
+
+
 def unknown_command(update, context):
     if 'buy' in update.message.text:
         mes = update.message.text.split('_')
@@ -108,6 +137,10 @@ def unknown_command(update, context):
         message = 'Успешно выставлен на продажу!\n\n'
         update.message.reply_text(message)
 
+    elif 'auth' in update.message.text:
+        test = update.message.text
+        message = 'Авторизация прошла успешно!'
+        update.message.reply_text(message)
     else:
         message = "Ой, а я не знаю такой команды. Напиши /help, что посмотреть список команд.\n"
         update.message.reply_text(message)
@@ -133,6 +166,7 @@ dispatcher.add_handler(CommandHandler("tokens", tockens_command))
 dispatcher.add_handler(CommandHandler("balance", balance_command))
 dispatcher.add_handler(CommandHandler("help", help_command))
 dispatcher.add_handler(CommandHandler("buy", buy_command))
+dispatcher.add_handler(CommandHandler("reg", reg_command))
 dispatcher.add_handler(CommandHandler("sell", sell_command))
 dispatcher.add_handler(CommandHandler("info", info_command))
 dispatcher.add_handler(MessageHandler(Filters.text or Filters.command, unknown_command))
