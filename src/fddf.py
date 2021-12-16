@@ -203,13 +203,13 @@ def catcher(func):
     return catch
 
 
- 
+@catcher
 def reg_command(update, context):
     message = 'Пройдите регистрацию по ссылке test.com'
     update.message.reply_text(message)
 
 
- 
+@catcher
 def start(update, context):
     print('START - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
     if not users.get(update.effective_user.id):
@@ -225,9 +225,8 @@ def start(update, context):
         update.message.reply_text(message)
 
 
- 
+@catcher
 def help_command(update, context):
-    print('HELP - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
     message = "Доступные команды:\n"
     message += "/start - Приветствие\n"
     message += "/buy - Купить NFT\n"
@@ -236,11 +235,13 @@ def help_command(update, context):
     message += "/balance - Баланс\n"
     message += "/tokens - Твои токены\n"
     update.message.reply_text(message)
+    print('HELP - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
 
 
- 
+@catcher
 def tockens_command(update, context):
-    print('TOKENS - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
+    print(users)
+    print(users[update.effective_user.id])
     if users[update.effective_user.id]['tokens'] != {}:
         message = 'Вот твои токены~\n\n'
         update.message.reply_text(message)
@@ -251,19 +252,20 @@ def tockens_command(update, context):
     else:
         message = 'Ой, у тебя еще нет токенов( Ты можешь купить их, написав /buy\n'
         update.message.reply_text(message)
+    print('TOKENS - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
 
 
- 
+@catcher
 def sell_command(update, context):
-    print('SELL - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
     message = 'Чтобы продать напиши sell_<цена>_<токен>\n'
     update.message.reply_text(message)
+    print('SELL' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
 
 
- 
+@catcher
 def unknown_command(update, context):
-    print('TEXT MESSAGE - ' + str(update.message.text)+ ' - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
     if 'buy' in update.message.text:
+        print('BUY -' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
         mes = update.message.text.split('_')
         token = mes[-1]
         price = market[token]['price']
@@ -286,29 +288,21 @@ def unknown_command(update, context):
             message += 'Ваш баланс: ' + str(users[update.effective_user.id]['balance']) + '\n'
             update.message.reply_text(message)
     elif 'sell' in update.message.text:
-        print('SELLING(TEXT) - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
-
         mes = update.message.text.split('_')
         token = mes[-1]
         price = int(mes[-2])
-        if price > 0:
-            market[token] = {
-                "price": price,
-                "user_id": update.effective_user.id,
-                'url': users[update.effective_user.id]['tokens'][token]['url']
-            }
+        market[token] = {
+            "price": price,
+            "user_id": update.effective_user.id,
+            'url': users[update.effective_user.id]['tokens'][token]['url']
+        }
 
-            users[update.effective_user.id]['tokens'].pop(token)
+        users[update.effective_user.id]['tokens'].pop(token)
 
-            message = 'Успешно выставлен на продажу!\n\n'
-            update.message.reply_text(message)
-        else:
-            message = 'Недопустимая цена!\n'
-            update.message.reply_text(message)
+        message = 'Успешно выставлен на продажу!\n\n'
+        update.message.reply_text(message)
 
     elif 'auth' in update.message.text:
-        print('AUTH - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
-
         global test
         test = update.message.text
         message = 'Авторизация прошла успешно!'
@@ -319,21 +313,23 @@ def unknown_command(update, context):
         update.message.reply_text(message)
 
 
- 
+@catcher
 def info_command(update, context):
-    print('INFO - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
-    message = "Здравствуй!\nЯ помогу тебе приобрести или продать NFT.\n"
+    message = "Здравствуй!\n Я помогу тебе приобрести или продать NFT.\n"
     message += "P.S. При покупке ты помешь получить небольшой бонус от меня)"
+
     update.message.reply_text(message)
+    print('INFO - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
 
 
- 
+@catcher
 def balance_command(update, context):
     message = 'Ваш баланс: ' + str(users[update.effective_user.id]['balance']) + '\n'
     update.message.reply_text(message)
+    print('BALANCE - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
 
 
- 
+@catcher
 def buy(update: Update, context: CallbackContext) -> None:
     print('BUY - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
     cursor = cursors.get(update.effective_user.id, 0)
@@ -366,7 +362,8 @@ def buy(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(message)
     update.message.reply_text('Сделайте выбор', reply_markup=reply_markup)
 
-   
+
+@catcher
 def button(update: Update, context: CallbackContext) -> None:
     """Parses the CallbackQuery and updates the message text."""
     query = update.callback_query
@@ -449,17 +446,18 @@ def button(update: Update, context: CallbackContext) -> None:
 TOKEN, URL, PRICE = range(3)
 
 
- 
+@catcher
 def add_token(update: Update, context: CallbackContext) -> int:
     print('ADD - ' + str(update.effective_user.id) + ' - ' + str(update.message.from_user['username']) + ' - ' + str(update.message.from_user['first_name']) + ' ' + str(update.message.from_user['last_name']))
     user = update.message.from_user
     update.message.reply_text(
-        'Вставьте токен'
+        'Вставьте NFT токен'
     )
 
     return TOKEN
 
 
+@catcher
 def add_url(update: Update, context: CallbackContext) -> int:
     temp[update.effective_user.id] = {}
     temp[update.effective_user.id]["token"] = update.message.text
@@ -472,15 +470,18 @@ def add_url(update: Update, context: CallbackContext) -> int:
     return URL
 
 
+@catcher
 def add_price(update: Update, context: CallbackContext) -> int:
     temp[update.effective_user.id]["url"] = update.message.text
 
     update.message.reply_text(
         'Введите цену, за которую вы хотите продать свой токен'
     )
+
     return PRICE
 
 
+@catcher
 def done_conv(update: Update, context: CallbackContext) -> int:
     try:
         price = int(update.message.text)
@@ -506,6 +507,7 @@ def done_conv(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
+@catcher
 def cancel_conv(update: Update, context: CallbackContext) -> int:
     """Cancels and ends the conversation."""
     update.message.reply_text(
